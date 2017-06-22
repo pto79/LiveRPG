@@ -1,10 +1,11 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var tilesprite;
 var player;
 var cursors;
 var text;
 var temp;
+var overlay;
 
 //temp = document.title;
 
@@ -20,7 +21,7 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //  A simple background for our game
-    tilesprite = game.add.tileSprite(0, 0, 800, 600, 'grass');
+    tilesprite = game.add.tileSprite(0, 0, window.innerWidth, window.innerHeight, 'grass');
 
     // The player and its settings
     player = game.add.sprite(game.world.centerX, game.world.centerY, 'dude');
@@ -39,9 +40,7 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();   
 
   //var overlay = document.querySelector('.test');
-  var overlay = document.getElementById('test');
-  //text = overlay.innerHTML;
-  temp = overlay.innerHTML;
+    overlay = document.getElementById('gps');
 
     // text
     text = game.add.text(16, 16, temp);
@@ -79,7 +78,9 @@ function update() {
         player.animations.stop();
         player.frame = 7;
     }
-    
+
+    temp = overlay.innerHTML;
+    text.setText(temp);
 
 }
 

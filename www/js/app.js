@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ngCordova'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -22,11 +22,28 @@ angular.module('starter', ['ionic'])
     }
   });
 })
-.controller('main', function($document, $cordovaGeolocation) {
-  $document[0].title = 'test document';
+.controller('main', function($scope, $ionicPlatform, $cordovaGeolocation, $interval) {
+  $scope.gps = "test";
 
+  var getGPS = function() {
+
+$ionicPlatform.ready(function() {
+
+  var posOptions = {timeout: 30000, enableHighAccuracy: false};
+  $cordovaGeolocation
+    .getCurrentPosition(posOptions)
+    .then(function (position) {
+      var lat  = position.coords.latitude;
+      var long = position.coords.longitude;
+      //alert(position.coords.heading);
+      $scope.gps = position.coords.heading;
+    }, function(err) {
+      // error
+      //alert('error');
+    });
+/*
   var watchOptions = {
-    timeout : 3000,
+    timeout : 30000,
     enableHighAccuracy: false // may cause errors if true
   };
 
@@ -35,11 +52,17 @@ angular.module('starter', ['ionic'])
     null,
     function(err) {
       // error
-      $document[0].title = "gps fail";
+      $scope.gps = "gps fail";
     },
     function(position) {
       var lat  = position.coords.latitude;
       var long = position.coords.longitude;
-      $document[0].title = position.coords.heading;
+      $scope.gps = position.coords.heading;
   });
-})
+*/
+  })
+}
+
+  $interval(getGPS, 3000);
+
+});

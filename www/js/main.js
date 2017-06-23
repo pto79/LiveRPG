@@ -1,4 +1,4 @@
-var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
 
 var tilesprite;
 var player;
@@ -6,11 +6,14 @@ var cursors;
 var text;
 var temp;
 var overlay;
+var gmap;
+var mapObj;
 
 //temp = document.title;
 
 function preload() {
     game.load.image('grass', 'assets/grass.png');
+    game.load.spritesheet('tileb', 'assets/tileb.png', 32, 32);
     game.load.spritesheet('dude', 'assets/universal-lpc-sprite_male_01_walk-3frame.png', 48, 64);
 }
 
@@ -44,6 +47,13 @@ function create() {
 
     // text
     text = game.add.text(16, 16, temp);
+
+    //  Creates a blank tilemap
+    //gmap = game.add.tilemap();
+    //gmap.addTilesetImage('tileb','wall',32,32,null,null,0);
+
+    mapObj = game.add.sprite(game.world.centerX-30, game.world.centerY-30, 'tileb')
+
 }
 
 function update() {
@@ -79,9 +89,14 @@ function update() {
         player.frame = 7;
     }
 
-    temp = overlay.innerHTML;
-    text.setText(temp);
+    //temp = overlay.innerHTML;
+    //text.setText(temp);
+
+    mapObj.frame = 2;
 
 }
 
-
+function render() {
+    temp = overlay.innerHTML;
+    game.debug.text(temp, 32, 32, 'rgb(0,0,0)');
+}

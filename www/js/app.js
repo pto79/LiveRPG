@@ -23,27 +23,58 @@ angular.module('starter', ['ionic', 'ngCordova'])
   });
 })
 .controller('main', function($scope, $ionicPlatform, $cordovaGeolocation, $interval) {
-  $scope.gps = "test";
+  $scope.direction = "test";
+  var lastLat = "";
+  var lastLong = "";
 
   var getGPS = function() {
 
-$ionicPlatform.ready(function() {
+    $ionicPlatform.ready(function() {
 
-  var posOptions = {timeout: 30000, enableHighAccuracy: false};
-  $cordovaGeolocation
-    .getCurrentPosition(posOptions)
-    .then(function (position) {
-      var lat  = position.coords.latitude;
-      var long = position.coords.longitude;
-      //alert(position.coords.heading);
-      $scope.gps = position.coords.heading;
-    }, function(err) {
-      // error
-      //alert('error');
-    });
+      var posOptions = {timeout: 30000, enableHighAccuracy: false};
+      $cordovaGeolocation
+        .getCurrentPosition(posOptions)
+        .then(function (position) {
+          console.log(position);
+          var lat  = position.coords.latitude;
+          var long = position.coords.longitude;
+          lat = Math.floor(lat*100000);
+          long = Math.floor(long*100000);
+          //alert(position.coords.heading);
+          if(lastLat != "" && lastLong != "")
+          {
+            if((lat == lastLat) && (long > lastLong)) //north
+              $scope.direction = "east";
+            else if((lat == lastLat) && (long < lastLong)) //south
+              $scope.direction = "west";
+            else if((long == lastLong) && (lat > lastLat)) //south
+              $scope.direction = "north";
+            else if((long == lastLong) && (lat < lastLat)) //south
+              $scope.direction = "south";
+            else if((lat > lastLat) && (long > lastLong)) //south
+              $scope.direction = "northeast";
+            else if((lat > lastLat) && (long < lastLong)) //south
+              $scope.direction = "northwest";
+            else if((lat < lastLat) && (long > lastLong)) //south
+              $scope.direction = "southeast";
+            else if((lat < lastLat) && (long < lastLong)) //south
+              $scope.direction = "southwest";
+            else if((lat == lastLat) && (long == lastLong)) //south
+              $scope.direction = "stopping";
+            $scope.direction = "stopping";
+          }
+          
+          lastLat = lat;
+          lastLong = long;
+        }, function(err) {
+          // error
+          //alert('error');
+        });
+    })
+  }
 /*
   var watchOptions = {
-    timeout : 30000,
+    timeout : 3000,
     enableHighAccuracy: false // may cause errors if true
   };
 
@@ -57,12 +88,9 @@ $ionicPlatform.ready(function() {
     function(position) {
       var lat  = position.coords.latitude;
       var long = position.coords.longitude;
-      $scope.gps = position.coords.heading;
-  });
+      $scope.gps = position.timestamp;
+  });  
 */
-  })
-}
-
-  $interval(getGPS, 3000);
+  //$interval(getGPS, 2000);
 
 });

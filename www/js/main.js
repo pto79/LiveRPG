@@ -10,6 +10,7 @@ var gmap;
 var mapObj;
 var absX;
 var absY;
+var direction;
 
 //temp = document.title;
 
@@ -153,51 +154,87 @@ function update() {
     {
         player.animations.play('west');
         //tilesprite.tilePosition.x += 1;
+        direction = 6;
     }
     else if (overlay.innerHTML == "east" || (game.input.pointer1.isDown && ((absX > 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
     {
         player.animations.play('east');
         //tilesprite.tilePosition.x -= 1;
+        direction = 2;
     }
     else if (overlay.innerHTML == "north" || (game.input.pointer1.isDown && ((absY > 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
     {
         player.animations.play('north');
         //tilesprite.tilePosition.y += 1;
+        direction = 0;
     }
     else if (overlay.innerHTML == "south" || (game.input.pointer1.isDown && ((absY < 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
     {
         player.animations.play('south');
         //tilesprite.tilePosition.y -= 1;
+        direction = 4;
     }
     else if (overlay.innerHTML == "northeast" || (game.input.pointer1.isDown && ((absX > 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.animations.play('northeast');
         //tilesprite.tilePosition.y += 1;
         //tilesprite.tilePosition.x -= 1;
+        direction = 1;
     }
     else if (overlay.innerHTML == "northwest" || (game.input.pointer1.isDown && ((absX < 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.animations.play('northwest');
         //tilesprite.tilePosition.y += 1;
         //tilesprite.tilePosition.x += 1;
+        direction = 7;
     }
     else if (overlay.innerHTML == "southeast" || (game.input.pointer1.isDown && ((absX > 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.animations.play('southeast');
         //tilesprite.tilePosition.y -= 1;
         //tilesprite.tilePosition.x -= 1;
+        direction = 3;
     }
     else if (overlay.innerHTML == "southwest" || (game.input.pointer1.isDown && ((absX < 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.animations.play('southwest');
         //tilesprite.tilePosition.y -= 1;
         //tilesprite.tilePosition.x += 1;
+        direction = 5;
     }
     else
     {
         //  Stand still
         player.animations.stop();
-        player.frame = 1;
+        switch (direction) {
+            case 0:
+                player.frame = 37;
+                break;
+            case 1:
+                player.frame = 43;
+                break;
+            case 2:
+                player.frame = 25;
+                break;
+            case 3:
+                player.frame = 7;
+                break;
+            case 4:
+                player.frame = 1;
+                break;
+            case 5:
+                player.frame = 19;
+                break;
+            case 6:
+                player.frame = 13;
+                break;
+            case 7:
+                player.frame = 31;
+                break;
+            default:
+                player.frame = 7;
+                break;
+        }
     }
 
     //temp = overlay.innerHTML;

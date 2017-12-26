@@ -14,6 +14,7 @@ var direction;
 var collision = false;
 var count = 0;
 var mapObjs;
+var player2;
 
 //temp = document.title;
 
@@ -40,8 +41,7 @@ function create() {
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
-    player.body.bounce.x = 0.2;
-    player.body.bounce.y = 0.2;
+    player.body.bounce.set(1)
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
@@ -66,10 +66,13 @@ function create() {
     mapObjs = game.add.group();
     mapObjs.enableBody = true;
     
-    mapObj = game.add.sprite(game.world.centerX-50, game.world.centerY-50, 'tileb');
+    mapObj = game.add.sprite(game.world.centerX-100, game.world.centerY-100, 'tileb');
     mapObj.frame = 2;
-    game.physics.arcade.enable(mapObj);
+    game.physics.arcade.enable(mapObj);    
+    mapObj.body.collideWorldBounds = true;
     mapObj.body.immovable = true;
+
+
 
     //collision = false;
 }
@@ -81,10 +84,9 @@ function collisionHandler (player, mapObj) {
 }
 
 function update() {
-    //game.physics.arcade.collide(player, mapObj);
+    game.physics.arcade.collide(player, mapObj);
 
-    collision = game.physics.arcade.collide(player, mapObj, collisionHandler, null, this);
-    
+    //collision = game.physics.arcade.collide(player, mapObj, collisionHandler, null, this);
 
     absX = game.input.pointer1.x - window.innerWidth/2;
     absY = window.innerHeight/2 - game.input.pointer1.y;

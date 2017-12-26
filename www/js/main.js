@@ -6,15 +6,12 @@ var cursors;
 var text;
 var temp;
 var overlay;
-var gmap;
 var mapObj;
 var absX;
 var absY;
 var direction;
 var collision = false;
 var count = 0;
-var mapObjs;
-var player2;
 
 //temp = document.title;
 
@@ -41,7 +38,7 @@ function create() {
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
-    player.body.bounce.set(1)
+    
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
@@ -62,38 +59,35 @@ function create() {
 
     // text
     text = game.add.text(16, 16, temp);
-
-    mapObjs = game.add.group();
-    mapObjs.enableBody = true;
     
     mapObj = game.add.sprite(game.world.centerX-100, game.world.centerY-100, 'tileb');
-    mapObj.frame = 2;
+    mapObj.frame = 63;
     game.physics.arcade.enable(mapObj);    
-    mapObj.body.collideWorldBounds = true;
     mapObj.body.immovable = true;
 
-
-
-    //collision = false;
+    collision = false;
 }
 
 function collisionHandler (player, mapObj) {
     //collision = true;
     count = count + 1;
+    mapObj.frame = 62;
     //prompt("Please enter your name", "Anonymous");
 }
 
 function update() {
-    game.physics.arcade.collide(player, mapObj);
+    collision = game.physics.arcade.collide(player, mapObj, collisionHandler, null, this);
 
     //collision = game.physics.arcade.collide(player, mapObj, collisionHandler, null, this);
-
+    player.body.velocity.x = 0;
+    player.body.velocity.y = 0;
     absX = game.input.pointer1.x - window.innerWidth/2;
     absY = window.innerHeight/2 - game.input.pointer1.y;
 
 
-    if (overlay.innerHTML == "west" || (game.input.pointer1.isDown && ((absX < 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
+    if (overlay.innerHTML == "west" || (cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
     {
+        player.body.velocity.x = -1;
         player.animations.play('west');
         direction = 6;        
         if(!collision) {
@@ -101,8 +95,9 @@ function update() {
             mapObj.x += 1;       
         }
     }
-    else if (overlay.innerHTML == "east" || (game.input.pointer1.isDown && ((absX > 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
+    else if (overlay.innerHTML == "east" || (cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
     {
+        player.body.velocity.x = 1;
         player.animations.play('east');
         direction = 2;
         if(!collision) {
@@ -110,8 +105,9 @@ function update() {
             mapObj.x -= 1;
         }
     }
-    else if (overlay.innerHTML == "north" || (game.input.pointer1.isDown && ((absY > 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
+    else if (overlay.innerHTML == "north" || (cursors.up.isDown) || (game.input.pointer1.isDown && ((absY > 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
     {
+        player.body.velocity.y = -1;
         player.animations.play('north');
         direction = 0;        
         if(!collision) {
@@ -119,8 +115,9 @@ function update() {
             mapObj.y += 1;
         }
     }
-    else if (overlay.innerHTML == "south" || (game.input.pointer1.isDown && ((absY < 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
+    else if (overlay.innerHTML == "south" || (cursors.down.isDown) || (game.input.pointer1.isDown && ((absY < 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
     {
+        player.body.velocity.y = 1;
         player.animations.play('south');
         direction = 4;
         if(!collision) {
@@ -128,8 +125,11 @@ function update() {
             mapObj.y -= 1;
         }
     }
-    else if (overlay.innerHTML == "northeast" || (game.input.pointer1.isDown && ((absX > 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    
+    else if (overlay.innerHTML == "northeast" || (cursors.up.isDown && cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
+        player.body.velocity.x = 1
+        player.body.velocity.y = -1;
         player.animations.play('northeast');
         direction = 1;
         if(!collision) {
@@ -139,8 +139,10 @@ function update() {
             mapObj.x -= 1;
         }
     }
-    else if (overlay.innerHTML == "northwest" || (game.input.pointer1.isDown && ((absX < 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (overlay.innerHTML == "northwest" || (cursors.up.isDown && cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
+        player.body.velocity.x = -1
+        player.body.velocity.y = -1;
         player.animations.play('northwest');
         direction = 7;        
         if(!collision) {
@@ -150,8 +152,10 @@ function update() {
             mapObj.x += 1;
         }
     }
-    else if (overlay.innerHTML == "southeast" || (game.input.pointer1.isDown && ((absX > 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (overlay.innerHTML == "southeast" || (cursors.down.isDown && cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
+        player.body.velocity.x = 1
+        player.body.velocity.y = 1;
         player.animations.play('southeast');
         direction = 3;        
         if(!collision) {
@@ -161,8 +165,10 @@ function update() {
             mapObj.x -= 1;        
         }
     }
-    else if (overlay.innerHTML == "southwest" || (game.input.pointer1.isDown && ((absX < 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (overlay.innerHTML == "southwest" || (cursors.down.isDown && cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
+        player.body.velocity.x = -1
+        player.body.velocity.y = 1;
         player.animations.play('southwest');
         direction = 5;        
         if(!collision) {
@@ -172,6 +178,7 @@ function update() {
             mapObj.x += 1;        
         }
     }
+    
     else
     {
         //  Stand still
@@ -209,7 +216,7 @@ function update() {
 
     //temp = overlay.innerHTML;
     //text.setText(temp);
-    //collision = false;
+    collision = false;
 }
 
 function render() {

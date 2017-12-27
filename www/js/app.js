@@ -3,6 +3,9 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
+var heading = "test";
+var showing = false;
+
 angular.module('starter', ['ionic', 'ngCordova'])
 
 .run(function($ionicPlatform) {
@@ -22,8 +25,7 @@ angular.module('starter', ['ionic', 'ngCordova'])
     }
   });
 })
-.controller('main', function($scope, $ionicPlatform, $cordovaGeolocation, $interval) {
-  $scope.direction = "test";
+.controller('main', function($scope, $ionicPlatform, $cordovaGeolocation, $interval, $ionicPopup, $ionicModal) {
   var lastLat = "";
   var lastLong = "";
 
@@ -44,24 +46,24 @@ angular.module('starter', ['ionic', 'ngCordova'])
           if(lastLat != "" && lastLong != "")
           {
             if((lat == lastLat) && (long > lastLong)) //north
-              $scope.direction = "east";
+              heading = "east";
             else if((lat == lastLat) && (long < lastLong)) //south
-              $scope.direction = "west";
+              heading = "west";
             else if((long == lastLong) && (lat > lastLat)) //south
-              $scope.direction = "north";
+              heading = "north";
             else if((long == lastLong) && (lat < lastLat)) //south
-              $scope.direction = "south";
+              heading = "south";
             else if((lat > lastLat) && (long > lastLong)) //south
-              $scope.direction = "northeast";
+              heading = "northeast";
             else if((lat > lastLat) && (long < lastLong)) //south
-              $scope.direction = "northwest";
+              heading = "northwest";
             else if((lat < lastLat) && (long > lastLong)) //south
-              $scope.direction = "southeast";
+              heading = "southeast";
             else if((lat < lastLat) && (long < lastLong)) //south
-              $scope.direction = "southwest";
+              heading = "southwest";
             else if((lat == lastLat) && (long == lastLong)) //south
-              $scope.direction = "stopping";
-            $scope.direction = "stopping";
+              heading = "stopping";
+            heading = "stopping";
           }
           
           lastLat = lat;
@@ -93,4 +95,38 @@ angular.module('starter', ['ionic', 'ngCordova'])
 */
   //$interval(getGPS, 2000);
 
+    $ionicModal.fromTemplateUrl('templates/modal_new.html', {
+        id: '1', // We need to use and ID to identify the modal that is firing the event!
+        scope: $scope,
+        backdropClickToClose: false,
+        animation: 'slide-in-up'
+    }).then(function(modal) {
+        $scope.oModalNew = modal;
+    });
+
+    $scope.showModal = function(name) {
+      if(!showing) {
+        showing = true;
+        $scope.objname = name;
+        $scope.oModalNew.show();
+      }
+    }    
+    $scope.hideModal = function() {
+      showing = false;
+      $scope.oModalNew.hide();
+    }
+
+
+    $scope.items = [
+      {
+          id: "63", 
+          name: "basket",
+          image: "img/basket.jpg"
+      },
+      {
+          id: "64", 
+          name: "tree",
+          image: "img/tree.jpg"
+      }
+    ]
 });

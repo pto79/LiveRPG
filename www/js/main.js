@@ -1,17 +1,14 @@
-var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO, 'gameDiv', { preload: preload, create: create, update: update, render: render });
 
 var tilesprite;
 var player;
 var cursors;
 var text;
-var temp;
-var overlay;
-var mapObj;
 var absX;
 var absY;
 var direction;
 var collision = false;
-var count = 0;
+var mapObjs;
 
 //temp = document.title;
 
@@ -38,7 +35,7 @@ function create() {
 
     //  We need to enable physics on the player
     game.physics.arcade.enable(player);
-    
+
     player.body.collideWorldBounds = true;
 
     //  Our two animations, walking left and right.
@@ -54,79 +51,76 @@ function create() {
     //  Our controls.
     cursors = game.input.keyboard.createCursorKeys();   
 
-    //var overlay = document.querySelector('.test');
-    overlay = document.getElementById('gps');
+    //mapObjs = game.add.group();
+    //mapObjs.enableBody = true;
+    //mapObjs.physicsBodyType = Phaser.Physics.ARCADE;
 
-    // text
-    text = game.add.text(16, 16, temp);
-    
-    mapObj = game.add.sprite(game.world.centerX-100, game.world.centerY-100, 'tileb');
-    mapObj.frame = 63;
-    game.physics.arcade.enable(mapObj);    
-    mapObj.body.immovable = true;
+    mapObjs = game.add.physicsGroup();
+
+    for (var i = 0; i < 10; i++)
+    {
+        var c = mapObjs.create(game.rnd.between(0, 1000), game.rnd.between(0, 1000), 'tileb', game.rnd.between(0, 255));
+        c.body.immovable = true;
+    }    
 
     collision = false;
 }
 
-function collisionHandler (player, mapObj) {
+function collisionHandler (player, obj) {
     //collision = true;
-    count = count + 1;
-    mapObj.frame = 62;
-    //prompt("Please enter your name", "Anonymous");
+
+    angular.element(document.getElementById('myionic')).scope().showModal(obj.frame);
 }
 
 function update() {
-    collision = game.physics.arcade.collide(player, mapObj, collisionHandler, null, this);
+    collision = game.physics.arcade.collide(player, mapObjs, collisionHandler, null, this);
 
-    //collision = game.physics.arcade.collide(player, mapObj, collisionHandler, null, this);
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
     absX = game.input.pointer1.x - window.innerWidth/2;
     absY = window.innerHeight/2 - game.input.pointer1.y;
 
-
-    if (overlay.innerHTML == "west" || (cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
+    if (heading == "west" || (cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
     {
         player.body.velocity.x = -1;
         player.animations.play('west');
         direction = 6;        
         if(!collision) {
             //tilesprite.tilePosition.x += 1;
-            mapObj.x += 1;       
+            mapObjs.x += 1;       
         }
     }
-    else if (overlay.innerHTML == "east" || (cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
+    else if (heading == "east" || (cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (Math.abs(absY) < Math.abs(absX)*0.41) )))
     {
         player.body.velocity.x = 1;
         player.animations.play('east');
         direction = 2;
         if(!collision) {
             //tilesprite.tilePosition.x -= 1;
-            mapObj.x -= 1;
+            mapObjs.x -= 1;
         }
     }
-    else if (overlay.innerHTML == "north" || (cursors.up.isDown) || (game.input.pointer1.isDown && ((absY > 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
+    else if (heading == "north" || (cursors.up.isDown) || (game.input.pointer1.isDown && ((absY > 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
     {
         player.body.velocity.y = -1;
         player.animations.play('north');
         direction = 0;        
         if(!collision) {
             //tilesprite.tilePosition.y += 1;
-            mapObj.y += 1;
+            mapObjs.y += 1;
         }
     }
-    else if (overlay.innerHTML == "south" || (cursors.down.isDown) || (game.input.pointer1.isDown && ((absY < 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
+    else if (heading == "south" || (cursors.down.isDown) || (game.input.pointer1.isDown && ((absY < 0) && (Math.abs(absY) > Math.abs(absX)*2.41) )))
     {
         player.body.velocity.y = 1;
         player.animations.play('south');
         direction = 4;
         if(!collision) {
             //tilesprite.tilePosition.y -= 1;
-            mapObj.y -= 1;
+            mapObjs.y -= 1;
         }
     }
-    
-    else if (overlay.innerHTML == "northeast" || (cursors.up.isDown && cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (heading == "northeast" || (cursors.up.isDown && cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.body.velocity.x = 1
         player.body.velocity.y = -1;
@@ -135,11 +129,11 @@ function update() {
         if(!collision) {
             //tilesprite.tilePosition.y += 1;
             //tilesprite.tilePosition.x -= 1;
-            mapObj.y += 1;
-            mapObj.x -= 1;
+            mapObjs.y += 1;
+            mapObjs.x -= 1;
         }
     }
-    else if (overlay.innerHTML == "northwest" || (cursors.up.isDown && cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (heading == "northwest" || (cursors.up.isDown && cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (absY > 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.body.velocity.x = -1
         player.body.velocity.y = -1;
@@ -148,11 +142,11 @@ function update() {
         if(!collision) {
             //tilesprite.tilePosition.y += 1;
             //tilesprite.tilePosition.x += 1;
-            mapObj.y += 1;
-            mapObj.x += 1;
+            mapObjs.y += 1;
+            mapObjs.x += 1;
         }
     }
-    else if (overlay.innerHTML == "southeast" || (cursors.down.isDown && cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (heading == "southeast" || (cursors.down.isDown && cursors.right.isDown) || (game.input.pointer1.isDown && ((absX > 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.body.velocity.x = 1
         player.body.velocity.y = 1;
@@ -161,11 +155,11 @@ function update() {
         if(!collision) {
             //tilesprite.tilePosition.y -= 1;
             //tilesprite.tilePosition.x -= 1;
-            mapObj.y -= 1;
-            mapObj.x -= 1;        
+            mapObjs.y -= 1;
+            mapObjs.x -= 1;        
         }
     }
-    else if (overlay.innerHTML == "southwest" || (cursors.down.isDown && cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
+    else if (heading == "southwest" || (cursors.down.isDown && cursors.left.isDown) || (game.input.pointer1.isDown && ((absX < 0) && (absY < 0) && (Math.abs(absY) < Math.abs(absX)*2.41) && (Math.abs(absY) > Math.abs(absX)*0.41) )))
     {
         player.body.velocity.x = -1
         player.body.velocity.y = 1;
@@ -174,11 +168,10 @@ function update() {
         if(!collision) {
             //tilesprite.tilePosition.y -= 1;
             //tilesprite.tilePosition.x += 1;
-            mapObj.y -= 1;
-            mapObj.x += 1;        
+            mapObjs.y -= 1;
+            mapObjs.x += 1;        
         }
     }
-    
     else
     {
         //  Stand still
@@ -214,14 +207,11 @@ function update() {
         }
     }
 
-    //temp = overlay.innerHTML;
-    //text.setText(temp);
     collision = false;
 }
 
 function render() {
-    temp = overlay.innerHTML;
-    game.debug.text(count, 32, 32, 'rgb(255,255,255)');
+    game.debug.text(heading, 32, 32, 'rgb(255,255,255)');
     //game.debug.pointer(game.input.positionDown);
     //game.debug.text(game.input.pointer1.x, 332, 32, 'rgb(255,255,255)');
 

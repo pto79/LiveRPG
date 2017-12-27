@@ -9,6 +9,7 @@ var absY;
 var direction;
 var collision = false;
 var mapObjs;
+var count = 0;
 
 //temp = document.title;
 
@@ -17,6 +18,7 @@ function preload() {
     game.load.spritesheet('tileb', 'assets/tileb.png', 32, 32);
     //game.load.spritesheet('dude', 'assets/universal-lpc-sprite_male_01_walk-3frame.png', 48, 64);
     game.load.spritesheet('dude', 'assets/6Actor_5.png', 32, 32);
+    game.load.spritesheet('pony', 'assets/pony_32x32.png', 32, 32);
 }
 
 function create() {
@@ -59,7 +61,7 @@ function create() {
 
     for (var i = 0; i < 10; i++)
     {
-        var c = mapObjs.create(game.rnd.between(0, 1000), game.rnd.between(0, 1000), 'tileb', game.rnd.between(0, 255));
+        var c = mapObjs.create(game.rnd.between(0, 1000), game.rnd.between(0, 1000), 'pony', game.rnd.between(0, 95));
         c.body.immovable = true;
     }    
 
@@ -68,12 +70,18 @@ function create() {
 
 function collisionHandler (player, obj) {
     //collision = true;
+    //angular.element(document.getElementById('myionic')).scope().showModal(obj.frame);
+}
 
-    angular.element(document.getElementById('myionic')).scope().showModal(obj.frame);
+function overlapHandler (player, obj) {
+    obj.kill();
+    count++;
 }
 
 function update() {
-    collision = game.physics.arcade.collide(player, mapObjs, collisionHandler, null, this);
+    //collision = game.physics.arcade.collide(player, mapObjs, collisionHandler, null, this);
+
+    game.physics.arcade.overlap(player, mapObjs, overlapHandler, null, this);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -211,12 +219,12 @@ function update() {
 }
 
 function render() {
-    game.debug.text(heading, 32, 32, 'rgb(255,255,255)');
+    game.debug.text(count, 32, 32, 'rgb(255,255,255)');
     //game.debug.pointer(game.input.positionDown);
     //game.debug.text(game.input.pointer1.x, 332, 32, 'rgb(255,255,255)');
 
-    game.debug.text("X:" + absX, 232, 32, 'rgb(255,255,255)');
-    game.debug.text("Y:" + absY, 332, 32, 'rgb(255,255,255)');
+    //game.debug.text("X:" + absX, 232, 32, 'rgb(255,255,255)');
+    //game.debug.text("Y:" + absY, 332, 32, 'rgb(255,255,255)');
     
 }
 

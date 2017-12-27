@@ -10,6 +10,7 @@ var direction;
 var collision = false;
 var mapObjs;
 var count = 0;
+var sound;
 
 //temp = document.title;
 
@@ -19,6 +20,7 @@ function preload() {
     //game.load.spritesheet('dude', 'assets/universal-lpc-sprite_male_01_walk-3frame.png', 48, 64);
     game.load.spritesheet('dude', 'assets/6Actor_5.png', 32, 32);
     game.load.spritesheet('pony', 'assets/pony_32x32.png', 32, 32);
+    //game.load.audio('sfx', 'assets/audio/SoundEffects/fx_mixdown.ogg');
 }
 
 function create() {
@@ -63,7 +65,9 @@ function create() {
     {
         var c = mapObjs.create(game.rnd.between(0, 1000), game.rnd.between(0, 1000), 'pony', game.rnd.between(0, 95));
         c.body.immovable = true;
-    }    
+    }
+
+    //sound = game.add.audio('sfx');
 
     collision = false;
 }
@@ -76,6 +80,7 @@ function collisionHandler (player, obj) {
 function overlapHandler (player, obj) {
     obj.kill();
     count++;
+    //sound.play();
 }
 
 function update() {

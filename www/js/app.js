@@ -6,7 +6,7 @@
 var heading = "test";
 var showing = false;
 
-angular.module('starter', ['ionic', 'ngCordova'])
+angular.module('starter', ['ionic', 'ngCordova', 'ngmqtt'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -25,9 +25,34 @@ angular.module('starter', ['ionic', 'ngCordova'])
     }
   });
 })
-.controller('main', function($scope, $ionicPlatform, $cordovaGeolocation, $interval, $ionicPopup, $ionicModal) {
+.controller('main', function($scope, $ionicPlatform, $cordovaGeolocation, $interval, $ionicPopup, $ionicModal, ngmqtt) {
   var lastLat = "";
   var lastLong = "";
+  var msgTopic = "liveRPG";
+
+  var options = {
+      clientId: "testrpg",
+      protocolId: 'MQTT',
+      protocolVersion: 4
+  };
+  ngmqtt.connect('ws://iot.eclipse.org:80/ws', options);
+
+  ngmqtt.listenConnection("main", function(){
+    console.log("connected");
+    ngmqtt.subscribe(msgTopic);
+/*
+    var i = 0;
+    $interval(function() {
+      ngmqtt.publish('topic4test', i.toString());
+      i++;
+    }, 300);
+    */
+  });  
+
+  ngmqtt.listenMessage("main", function(topic, message){
+    console.log("message received");
+    console.log(topic + ": " + message);
+  });
 
   var getGPS = function() {
 

@@ -11,8 +11,13 @@ var collision = false;
 var mapObjs;
 var count = 0;
 var sound;
-
+var showTile = false;
 //temp = document.title;
+
+var bullets;
+
+var fireRate = 100;
+var nextFire = 0;
 
 function preload() {
     game.load.image('grass', 'assets/grass.png');
@@ -21,6 +26,7 @@ function preload() {
     game.load.spritesheet('dude', 'assets/6Actor_5.png', 32, 32);
     game.load.spritesheet('pony', 'assets/pony_32x32.png', 32, 32);
     //game.load.audio('sfx', 'assets/audio/SoundEffects/fx_mixdown.ogg');
+    game.load.image('bullet', 'assets/red_ball.png');
 }
 
 function create() {
@@ -29,8 +35,8 @@ function create() {
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     //  A simple background for our game
-    //tilesprite = game.add.tileSprite(0, 0, window.innerWidth, window.innerHeight, 'grass');
-
+    tilesprite = game.add.tileSprite(0, 0, window.innerWidth, window.innerHeight, 'grass');
+    showTile = true;
     // The player and its settings
     player = game.add.sprite(game.world.centerX, game.world.centerY, 'dude');
     //player.anchor.set(0.5,0.5);
@@ -63,13 +69,21 @@ function create() {
 
     for (var i = 0; i < 10; i++)
     {
-        var c = mapObjs.create(game.rnd.between(0, 1000), game.rnd.between(0, 1000), 'pony', game.rnd.between(0, 95));
+        var c = mapObjs.create(game.rnd.between(0, 500), game.rnd.between(0, 500), 'pony', game.rnd.between(0, 95));
         c.body.immovable = true;
     }
 
     //sound = game.add.audio('sfx');
 
     collision = false;
+
+    bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
+    bullets.createMultiple(1, 'bullet');
+    bullets.setAll('checkWorldBounds', true);
+    bullets.setAll('outOfBoundsKill', true);   
 }
 
 function collisionHandler (player, obj) {
@@ -99,7 +113,7 @@ function update() {
         player.animations.play('west');
         direction = 6;        
         if(!collision) {
-            //tilesprite.tilePosition.x += 1;
+            if(showTile) tilesprite.tilePosition.x += 1;
             mapObjs.x += 1;       
         }
     }
@@ -109,7 +123,7 @@ function update() {
         player.animations.play('east');
         direction = 2;
         if(!collision) {
-            //tilesprite.tilePosition.x -= 1;
+            if(showTile) tilesprite.tilePosition.x -= 1;
             mapObjs.x -= 1;
         }
     }
@@ -119,7 +133,7 @@ function update() {
         player.animations.play('north');
         direction = 0;        
         if(!collision) {
-            //tilesprite.tilePosition.y += 1;
+            if(showTile) tilesprite.tilePosition.y += 1;
             mapObjs.y += 1;
         }
     }
@@ -129,7 +143,7 @@ function update() {
         player.animations.play('south');
         direction = 4;
         if(!collision) {
-            //tilesprite.tilePosition.y -= 1;
+            if(showTile) tilesprite.tilePosition.y -= 1;
             mapObjs.y -= 1;
         }
     }
@@ -140,8 +154,10 @@ function update() {
         player.animations.play('northeast');
         direction = 1;
         if(!collision) {
-            //tilesprite.tilePosition.y += 1;
-            //tilesprite.tilePosition.x -= 1;
+            if(showTile) {
+            tilesprite.tilePosition.y += 1;
+            tilesprite.tilePosition.x -= 1;
+            }
             mapObjs.y += 1;
             mapObjs.x -= 1;
         }
@@ -153,8 +169,10 @@ function update() {
         player.animations.play('northwest');
         direction = 7;        
         if(!collision) {
-            //tilesprite.tilePosition.y += 1;
-            //tilesprite.tilePosition.x += 1;
+            if(showTile) {
+            tilesprite.tilePosition.y += 1;
+            tilesprite.tilePosition.x += 1;
+            }
             mapObjs.y += 1;
             mapObjs.x += 1;
         }
@@ -166,8 +184,10 @@ function update() {
         player.animations.play('southeast');
         direction = 3;        
         if(!collision) {
-            //tilesprite.tilePosition.y -= 1;
-            //tilesprite.tilePosition.x -= 1;
+            if(showTile) {
+            tilesprite.tilePosition.y -= 1;
+            tilesprite.tilePosition.x -= 1;
+            }
             mapObjs.y -= 1;
             mapObjs.x -= 1;        
         }
@@ -179,8 +199,10 @@ function update() {
         player.animations.play('southwest');
         direction = 5;        
         if(!collision) {
-            //tilesprite.tilePosition.y -= 1;
-            //tilesprite.tilePosition.x += 1;
+            if(showTile) {
+            tilesprite.tilePosition.y -= 1;
+            tilesprite.tilePosition.x += 1;
+            }
             mapObjs.y -= 1;
             mapObjs.x += 1;        
         }
@@ -221,15 +243,36 @@ function update() {
     }
 
     collision = false;
+
+    if (game.input.activePointer.isDown)
+    {
+        fire();
+    }
 }
 
 function render() {
-    game.debug.text(count, 32, 32, 'rgb(255,255,255)');
+    game.debug.text(count, 32, 32, 'rgb(55,55,55)');
     //game.debug.pointer(game.input.positionDown);
     //game.debug.text(game.input.pointer1.x, 332, 32, 'rgb(255,255,255)');
 
     //game.debug.text("X:" + absX, 232, 32, 'rgb(255,255,255)');
     //game.debug.text("Y:" + absY, 332, 32, 'rgb(255,255,255)');
+    game.debug.text("X:" + Math.floor(player.x), 132, 32, 'rgb(255,255,255)');
+    game.debug.text("Y:" + Math.floor(player.y), 232, 32, 'rgb(255,255,255)');
     
 }
 
+function fire() {
+
+    if (game.time.now > nextFire && bullets.countDead() > 0)
+    {
+        nextFire = game.time.now + fireRate;
+
+        var bullet = bullets.getFirstDead();
+
+        bullet.reset(player.x , player.y );
+
+        game.physics.arcade.moveToPointer(bullet, 300);
+    }
+
+}

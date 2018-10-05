@@ -1,0 +1,56 @@
+{
+  "name": "ngmqtt",
+  "version": "1.0.2",
+  "description": "Angular service to handle an MQTT connection in multiple controllers",
+  "main": "ngmqtt.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vasco-santos/ngmqtt.git"
+  },
+  "keywords": [
+    "mqtt",
+    "angularjs"
+  ],
+  "author": {
+    "name": "vascosantos",
+    "email": "santos.vasco10@gmail.com",
+    "url": "http://vasco-santos.github.io/"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vasco-santos/ngmqtt/issues"
+  },
+  "homepage": "https://github.com/vasco-santos/ngmqtt#readme",
+  "gitHead": "3842f05cc3e3b6fe53ddd46d46bd08de24495e6c",
+  "_id": "ngmqtt@1.0.2",
+  "_shasum": "349d7d6896d5e76512d13d10463966634b3191d0",
+  "_from": "ngmqtt@latest",
+  "_npmVersion": "3.10.2",
+  "_nodeVersion": "6.2.2",
+  "_npmUser": {
+    "name": "vascosantos",
+    "email": "santos.vasco10@gmail.com"
+  },
+  "dist": {
+    "shasum": "349d7d6896d5e76512d13d10463966634b3191d0",
+    "tarball": "https://registry.npmjs.org/ngmqtt/-/ngmqtt-1.0.2.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "vascosantos",
+      "email": "santos.vasco10@gmail.com"
+    }
+  ],
+  "_npmOperationalInternal": {
+    "host": "packages-12-west.internal.npmjs.com",
+    "tmp": "tmp/ngmqtt-1.0.2.tgz_1469911052228_0.7254076763056219"
+  },
+  "_resolved": "https://registry.npmjs.org/ngmqtt/-/ngmqtt-1.0.2.tgz",
+  "readme": "ERROR: No README data found!"
+}
